@@ -2,29 +2,28 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useState, useEffect } from "react"; // إضافة الهوكس
-import { supabase } from "@/integrations/supabase/client"; // استدعاء سوبا بيز
-import { Session } from "@supabase/supabase-js"; // استدعاء نوع الجلسة
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Session } from "@supabase/supabase-js";
 import Index from "./pages/Index";
-import Login from "./pages/Login"; // هام: تأكد أنك أنشأت ملف Login.tsx كما اتفقنا
+import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+console.log("Check Key:", import.meta.env.VITE_SUPABASE_ANON_KEY);
+
 const App = () => {
-  // 1. متغيرات لتخزين حالة المستخدم (مسجل دخول أم لا)
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 2. التحقق من الجلسة عند فتح الموقع
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
     });
 
-    // 3. الاستماع لأي تغيير (تسجيل دخول أو خروج)
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -34,7 +33,6 @@ const App = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // 4. شاشة تحميل سوداء ريثما يتأكد من الدخول
   if (loading) {
     return (
       <div className="h-screen w-screen bg-slate-950 flex items-center justify-center text-white">
@@ -51,15 +49,12 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
+        <Router>
           <Routes>
-            {/* 5. المعادلة السحرية: إذا في جلسة اعرض الموقع، وإلا اعرض صفحة الدخول */}
             <Route path="/" element={session ? <Index /> : <Login />} />
-            
-            {/* المسارات الأخرى */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </BrowserRouter>
+        </Router>
       </TooltipProvider>
     </QueryClientProvider>
   );
