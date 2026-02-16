@@ -31,5 +31,5 @@ To run this project locally, follow these steps:
 
 ### 1. Clone the repository
 ```bash
-git clone [https://github.com/YOUR-USERNAME/ask-timer.git](https://github.com/YOUR-USERNAME/ask-timer.git)
-cd ask-timer
+git clone [https://github.com/Kahfazan-Dv/ASK-Timer.git](https://github.com/Kahfazan-Dv/ASK-Timer.git)
+cd ASK-Timer
